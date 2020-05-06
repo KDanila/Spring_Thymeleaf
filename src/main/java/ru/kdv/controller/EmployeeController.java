@@ -3,39 +3,43 @@ package ru.kdv.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import ru.kdv.Service.EmployeeService;
 import ru.kdv.model.Employee;
 
-import javax.annotation.PostConstruct;
-import java.util.ArrayList;
 import java.util.List;
 
 @Controller
 @RequestMapping("/employees")
 public class EmployeeController {
 
-	private List<Employee> theEmployees;
-	
-	@PostConstruct
-	private void loadData() {
-		
-		Employee emp1 = new Employee(1, "Leslie", "Andrews", "leslie@ya.ru");
-		Employee emp2 = new Employee(2, "Emma", "Baumgarten", "emma@ya.ru");
-		Employee emp3 = new Employee(3, "Avani", "Gupta", "avani@ya.ru");
+	private EmployeeService employeeService;
 
-		theEmployees = new ArrayList<>();
-		
-		theEmployees.add(emp1);
-		theEmployees.add(emp2);
-		theEmployees.add(emp3);
-	
+	public EmployeeController(EmployeeService theEmployeeService) {
+		employeeService = theEmployeeService;
 	}
 	
 	@GetMapping("/list")
 	public String listEmployees(Model theModel) {
+		List<Employee> theEmployees = employeeService.findAll();
 		theModel.addAttribute("employees", theEmployees);
 		return "list-employees";
 	}
+
+	@GetMapping("/addForm")
+	public String addForm(Model model){
+		model.addAttribute("employee", new Employee());
+		return "add-form";
+	}
+
+	@PostMapping("/save")
+	public String saveEmployee(@ModelAttribute("employee") Employee employee){
+
+		return "redirect:/employee/list";
+	}
+
 }
 
 
