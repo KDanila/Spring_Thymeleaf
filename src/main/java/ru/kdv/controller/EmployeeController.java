@@ -2,10 +2,7 @@ package ru.kdv.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import ru.kdv.Service.EmployeeService;
 import ru.kdv.model.Employee;
 
@@ -34,10 +31,22 @@ public class EmployeeController {
 		return "add-form";
 	}
 
+	@GetMapping("/updateEmployee")
+	public String updateEmployee(@RequestParam("employeeId") int id, Model model){
+		model.addAttribute("employee", employeeService.findById(id));
+		return "add-form";
+	}
+
+	@GetMapping("/deleteEmployee")
+	public String deleteEmployee(@RequestParam("employeeId") int id, Model model){
+		employeeService.deleteById(id);
+		return "redirect:/employees/list";
+	}
+
 	@PostMapping("/save")
 	public String saveEmployee(@ModelAttribute("employee") Employee employee){
-
-		return "redirect:/employee/list";
+		employeeService.save(employee);
+		return "redirect:/employees/list";
 	}
 
 }
